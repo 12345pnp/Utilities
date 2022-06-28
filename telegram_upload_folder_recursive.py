@@ -45,25 +45,6 @@ async def recursive_call_to_upload_in_folder(dir_path, client):
             count += 1
             try:
                 tasks.append(client.send_file(g_entity, f_name, force_document=True, caption=str(count) + " " + str(dir_path)))
-
-                if not count%max_async_queue:
-                    for future in asyncio.as_completed(tasks):
-                        f = open(log_filename, "a")
-                        try:
-                            try:
-                                name = future.cr_frame.f_locals
-                            except:
-                                name = ""
-                            await future
-                            f = open(log_filename, "a")
-                            f.write("Task finished : " + str(name)  + str(datetime.datetime.now()) + "\n")
-                            f.close()
-                            print("Upload successful")
-                        except Exception as e:
-                            f.write("Task failed : " + str(name) + "\n" + str(e) + "\n")
-                            print("Upload failure")
-                        f.close()
-                    tasks = []
                 f = open(log_filename, "a")
                 f.write("Queued: " + f_name + "\n")
                 f.close()
@@ -73,6 +54,24 @@ async def recursive_call_to_upload_in_folder(dir_path, client):
                 f.write("Queue failed : " + f_name + "\n" + str(e) + "\n")
                 f.close()
                 print("Queue failure")
+            if not count%max_async_queue:
+                for future in asyncio.as_completed(tasks):
+                    f = open(log_filename, "a")
+                    try:
+                        try:
+                            name = future.cr_frame.f_locals
+                        except:
+                            name = ""
+                        await future
+                        f = open(log_filename, "a")
+                        f.write("Task finished : " + str(name)  + str(datetime.datetime.now()) + "\n")
+                        f.close()
+                        print("Upload successful")
+                    except Exception as e:
+                        f.write("Task failed : " + str(name) + "\n" + str(e) + "\n")
+                        print("Upload failure")
+                    f.close()
+                tasks = []
     if tasks:
         for future in asyncio.as_completed(tasks):
             f = open(log_filename, "a")
