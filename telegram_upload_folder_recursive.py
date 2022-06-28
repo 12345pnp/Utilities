@@ -35,7 +35,7 @@ async def recursive_call_to_upload_in_folder(dir_path, client):
         f_name = join(dir_path, l)
         if isdir(f_name):
             await recursive_call_to_upload_in_folder(f_name, client)
-        elif isfile(f_name) and (f_name.split("\")[-1] == file_type or file_type == "ALL"):
+        elif isfile(f_name) and (f_name.split("\\")[-1] == file_type or file_type == "ALL"):
             f = open(log_filename, "r")
             f_logs = str(f.read())
             f.close()
